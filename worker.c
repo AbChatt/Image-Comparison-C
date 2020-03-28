@@ -17,7 +17,30 @@
 
 Image* read_image(char *filename)
 {
-        Image *img;
+        Image *img = NULL;
+        FILE *img_file = fopen(filename, "r");
+        char data[3];
+
+        // height = # rows
+        // width = # cols
+
+        fscanf(img_file, "%s\n", data);
+        printf("%s\n", data);
+
+        if (strcmp(data, "P3") == 0) {
+                // get header
+                fscanf(img_file, "%d %d", &img->width, &img->height);
+                printf("%d\n", img->width);
+                fscanf(img_file, "%d", &img->max_value);
+                printf("%d\n", img->height);
+
+                // get pixels
+        }
+        else
+        {
+                printf("Error: Incorrect/missing magic number. Header should start with P3\n");
+        }
+        
         return img;
 }
 
@@ -59,9 +82,9 @@ float compare_images(Image *img1, char *filename) {
 * - keep track of the image that is most similar 
 * - write a struct CompRecord with the info for the most similar image to out_fd
 */
-CompRecord process_dir(char *dirname, Image *img, int out_fd){
+// CompRecord process_dir(char *dirname, Image *img, int out_fd){
 
-        CompRecord CRec;
+//         CompRecord CRec;
 
-        return CRec;
-}
+//         return CRec;
+// }

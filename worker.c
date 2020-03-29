@@ -19,12 +19,18 @@ Image* read_image(char *filename)
 {
         Image *img = NULL;
         FILE *img_file = fopen(filename, "r");
+        Pixel *root = NULL;
         char data[3];
+        int r_pixel = -1;
+        int g_pixel = -1;
+        int b_pixel = -1;
+
+        img->p = NULL;
 
         // height = # rows
         // width = # cols
 
-        fscanf(img_file, "%s\n", data);
+        fscanf(img_file, "%s", data);
         printf("%s\n", data);
 
         if (strcmp(data, "P3") == 0) {
@@ -34,7 +40,22 @@ Image* read_image(char *filename)
                 fscanf(img_file, "%d", &img->max_value);
                 printf("%d\n", img->height);
 
+                // make space for pixels
+                Pixel *arr = malloc((img->height * img->width) * sizeof(Pixel));
+                arr = {NULL};
+                img->p = arr;
+
                 // get pixels
+                while (fscanf(img_file, "%d %d %d", &r_pixel, &g_pixel, &b_pixel) != EOF) {
+                        root = img->p;
+                        while (root != NULL) {
+                                root = *(root + 1);
+                        }
+                        root->red = r_pixel;
+                        root->green = g_pixel;
+                        root->blue = b_pixel;
+                }
+
         }
         else
         {
@@ -72,6 +93,7 @@ float eucl_distance (Pixel p1, Pixel p2) {
  */
 
 float compare_images(Image *img1, char *filename) {
+       FILE *img_file = fopen(filename, "r");      
        return 0;
 }
 

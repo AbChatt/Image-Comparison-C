@@ -19,11 +19,11 @@ Image* read_image(char *filename)
 {
         Image *img = NULL;
         FILE *img_file = fopen(filename, "r");
-        Pixel *root = NULL;
         char data[3];
         int r_pixel = -1;
         int g_pixel = -1;
         int b_pixel = -1;
+        int index = 0;
 
         img->p = NULL;
 
@@ -41,19 +41,25 @@ Image* read_image(char *filename)
                 printf("%d\n", img->height);
 
                 // make space for pixels
-                Pixel *arr = malloc((img->height * img->width) * sizeof(Pixel));
-                arr = {NULL};
+                Pixel *arr = (Pixel *)calloc((img->height * img->width), sizeof(Pixel));
+                //arr = {NULL};
                 img->p = arr;
 
                 // get pixels
                 while (fscanf(img_file, "%d %d %d", &r_pixel, &g_pixel, &b_pixel) != EOF) {
-                        root = img->p;
-                        while (root != NULL) {
-                                root = *(root + 1);
+                        if (img->p == 0) {
+                                img->p[0].red = r_pixel;
+                                img->p[0].green = g_pixel;
+                                img->p[0].blue = b_pixel;
                         }
-                        root->red = r_pixel;
-                        root->green = g_pixel;
-                        root->blue = b_pixel;
+                        else
+                        {
+                                img->p[index].red = r_pixel;
+                                img->p[index].green = g_pixel;
+                                img->p[index].blue = b_pixel;
+                        }
+
+                        index++;
                 }
 
         }
@@ -93,8 +99,37 @@ float eucl_distance (Pixel p1, Pixel p2) {
  */
 
 float compare_images(Image *img1, char *filename) {
-       FILE *img_file = fopen(filename, "r");      
-       return 0;
+       FILE *img_file = fopen(filename, "r");
+       Pixel new_pixel;
+       int row_num = -1;
+       int col_num = -1;
+       char data[3];
+       int eucl_dist = 0;
+       int count = 0;
+
+       // process header
+       fscanf(img_file, "%s", data);
+       fscanf(img_file, "%d %d", &col_num, &row_num);
+
+       // height = # rows
+       // width = # cols
+
+       if (col_num == img1->width && row_num == img1->height) {
+               for (int i = 0; i < row_num; i++) {
+                       for (int j = 0; j < col_num; j++) {
+                               fscanf(img_file, "%d %d %d", &new_pixel.red, &new_pixel.green, &new_pixel.blue);
+                               eucl_dist = eucl_distance(img1->p[count], new_pixel);
+                               count++;
+                       }
+               }
+       }
+       else
+       {
+               return FLT_MAX;
+       }
+       
+
+       return eucl_dist / count;
 }
 
 /* process all files in one directory and find most similar image among them

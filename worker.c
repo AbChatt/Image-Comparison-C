@@ -145,6 +145,9 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
         DIR *master_dir = opendir(dirname);
         struct dirent *dp;
         char current_path[PATHLENGTH];
+        float current_distance = -1.0;
+        strncpy(CRec.filename, "", PATHLENGTH);
+        CRec.distance = FLT_MAX;
 
         if (master_dir == NULL) {
                 perror("Failed to open directory");
@@ -156,7 +159,7 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
                                 continue;
                         }
 
-                        strncpy(current_path, master_dir, PATHLENGTH);
+                        strncpy(current_path, dirname, PATHLENGTH);
                         strncpy(current_path, "/", PATHLENGTH - strlen(current_path) - 1);
                         strncpy(current_path, dp->d_name, PATHLENGTH - strlen(current_path) - 1);
 
@@ -167,8 +170,12 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
                         }
 
                         if (S_ISREG(info.st_mode)) {
-                                // read image
-                                // compare image
+                                current_distance = compare_images(img, current_path);
+
+                                if (current_distance < CRec.distance) {
+                                        CRec.distance = current_distance;
+                                        strncpy(CRec.filename, current_path, PATHLENGTH);
+                                }
                         }
                 }
         }

@@ -70,11 +70,8 @@ int main(int argc, char **argv) {
 		// Otherwise ignore it.
 		if(S_ISDIR(sbuf.st_mode)) {
                         printf("Processing all images in directory: %s \n", path);
-						// create Image representation of provided image
-						Image *img_file = read_image(image_file);
-
 						// call process_dir on each sub directory
-						CRec = process_dir(path, img_file, STDOUT_FILENO);
+						//CRec = process_dir(path, , STDOUT_FILENO);
 		}
 		
 	}

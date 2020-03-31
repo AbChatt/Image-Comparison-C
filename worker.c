@@ -145,6 +145,7 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
         DIR *master_dir = opendir(dirname);
         struct dirent *dp;
         char current_path[PATHLENGTH];
+        
         float current_distance = -1.0;
         strncpy(CRec.filename, "", PATHLENGTH);
         CRec.distance = FLT_MAX;

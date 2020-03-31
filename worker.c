@@ -139,9 +139,40 @@ float compare_images(Image *img1, char *filename) {
 * - keep track of the image that is most similar 
 * - write a struct CompRecord with the info for the most similar image to out_fd
 */
-// CompRecord process_dir(char *dirname, Image *img, int out_fd){
+CompRecord process_dir(char *dirname, Image *img, int out_fd){
 
-//         CompRecord CRec;
+        CompRecord CRec;
+        DIR *master_dir = opendir(dirname);
+        struct dirent *dp;
+        char current_path[PATHLENGTH];
 
-//         return CRec;
-// }
+        if (master_dir == NULL) {
+                perror("Failed to open directory");
+        }
+        else
+        {
+                while ((dp = readdir(master_dir)) != NULL) {
+                        if (strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0 || strcmp(dp->d_name, ".svn") == 0) {
+                                continue;
+                        }
+
+                        strncpy(current_path, master_dir, PATHLENGTH);
+                        strncpy(current_path, "/", PATHLENGTH - strlen(current_path) - 1);
+                        strncpy(current_path, dp->d_name, PATHLENGTH - strlen(current_path) - 1);
+
+                        struct stat info;
+                        if (stat(current_path, &info) == -1) {
+                                perror("Incorrect path or permission denied");
+                                exit(1);
+                        }
+
+                        if (S_ISREG(info.st_mode)) {
+                                // read image
+                                // compare image
+                        }
+                }
+        }
+        
+
+        return CRec;
+}

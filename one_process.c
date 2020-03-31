@@ -70,6 +70,8 @@ int main(int argc, char **argv) {
 		// Otherwise ignore it.
 		if(S_ISDIR(sbuf.st_mode)) {
                         printf("Processing all images in directory: %s \n", path);
+						// call process_dir on each sub directory
+						//CRec = process_dir(path, )
 		}
 		
 	}

@@ -17,7 +17,7 @@
 
 Image* read_image(char *filename)
 {
-        Image *img = NULL;
+        Image *img = malloc(1 * sizeof(Image));
         FILE *img_file = fopen(filename, "r");
         char data[3];
         int r_pixel = -1;
@@ -31,14 +31,14 @@ Image* read_image(char *filename)
         // width = # cols
 
         fscanf(img_file, "%s", data);
-        printf("%s\n", data);
+        //printf("%s\n", data);
 
         if (strcmp(data, "P3") == 0) {
                 // get header
                 fscanf(img_file, "%d %d", &img->width, &img->height);
-                printf("%d\n", img->width);
+                //printf("%d\n", img->width);
                 fscanf(img_file, "%d", &img->max_value);
-                printf("%d\n", img->height);
+                //printf("%d\n", img->height);
 
                 // make space for pixels
                 Pixel *arr = (Pixel *)calloc((img->height * img->width), sizeof(Pixel));
@@ -67,6 +67,8 @@ Image* read_image(char *filename)
         {
                 printf("Error: Incorrect/missing magic number. Header should start with P3\n");
         }
+
+        print_image(img);
         
         return img;
 }

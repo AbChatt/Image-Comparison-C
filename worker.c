@@ -68,7 +68,7 @@ Image* read_image(char *filename)
                 printf("Error: Incorrect/missing magic number. Header should start with P3\n");
         }
 
-        print_image(img);
+        //print_image(img);
         
         return img;
 }
@@ -163,8 +163,8 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
                         }
 
                         strncpy(current_path, dirname, PATHLENGTH);
-                        strncpy(current_path, "/", PATHLENGTH - strlen(current_path) - 1);
-                        strncpy(current_path, dp->d_name, PATHLENGTH - strlen(current_path) - 1);
+                        strncat(current_path, "/", PATHLENGTH - strlen(current_path) - 1);
+                        strncat(current_path, dp->d_name, PATHLENGTH - strlen(current_path) - 1);
 
                         struct stat info;
                         if (stat(current_path, &info) == -1) {

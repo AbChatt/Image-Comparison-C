@@ -31,18 +31,14 @@ Image* read_image(char *filename)
         // width = # cols
 
         fscanf(img_file, "%s", data);
-        //printf("%s\n", data);
 
         if (strcmp(data, "P3") == 0) {
                 // get header
                 fscanf(img_file, "%d %d", &img->width, &img->height);
-                //printf("%d\n", img->width);
                 fscanf(img_file, "%d", &img->max_value);
-                //printf("%d\n", img->height);
 
                 // make space for pixels
                 Pixel *arr = (Pixel *)calloc((img->height * img->width), sizeof(Pixel));
-                //arr = {NULL};
                 img->p = arr;
 
                 // get pixels
@@ -66,9 +62,8 @@ Image* read_image(char *filename)
         else
         {
                 printf("Error: Incorrect/missing magic number. Header should start with P3\n");
+                return NULL;
         }
-
-        //print_image(img);
         
         return img;
 }
@@ -106,18 +101,22 @@ float compare_images(Image *img1, char *filename) {
        int count = 0;
 
        if (img1->height == img2->height && img1->width == img2->width) {
-               eucl_dist = eucl_distance(img1->p[count], img2->p[count]);
-               count++;
+               for (int i = 0; i < img1->height; i++) {
+                       for (int j = 0; j < img1->width; j++) {
+                               eucl_dist = eucl_dist + eucl_distance(img1->p[count], img2->p[count]);
+                               count++;
+                       }
+               }
+
+               free(img2->p);
+               free(img2);
+
+               return eucl_dist / count;
        }
        else
        {
                return FLT_MAX;
        }
-
-       free(img2->p);
-       free(img2);
-
-       return eucl_dist / count;
 }
 
 /* process all files in one directory and find most similar image among them
@@ -160,7 +159,7 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
 
                         if (S_ISREG(info.st_mode)) {
                                 current_distance = compare_images(img, current_path);
-
+                                
                                 if (current_distance < CRec.distance) {
                                         CRec.distance = current_distance;
                                         strncpy(CRec.filename, current_path, PATHLENGTH);

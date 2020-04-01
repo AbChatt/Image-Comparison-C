@@ -46,10 +46,17 @@ int main(int argc, char **argv) {
 		
 	struct dirent *dp;
         CompRecord CRec;
+		CompRecord *p = NULL;
+
+		strncpy(CRec.filename, "", PATHLENGTH);
+		CRec.distance = FLT_MAX;
 	
 	int fd[2], r;
-	pipe(fd);
-	r = fork();
+	//pipe(fd);
+
+	// if (pipe(fd) == -1) {
+	// 	perror("Unable to create pipe\n");
+	// }
 
 	while((dp = readdir(dirp)) != NULL) {
 
@@ -69,17 +76,46 @@ int main(int argc, char **argv) {
 			// or we don't have permissions on this entry.
 			perror("stat");
 			exit(1);
+		}
+
+		pipe(fd);
+		if (pipe(fd) == -1) {
+			perror("Unable to create pipe\n");
 		} 
 
 		// Only call process_dir if it is a directory
 		// Otherwise ignore it.
 		if(S_ISDIR(sbuf.st_mode)) {
                         printf("Processing all images in directory: %s \n", path);
-						// create Image representation of provided image
-						Image *img_file = read_image(image_file);
+						// fork child process
+						r = fork();
 
-						// call process_dir on each sub directory
-						CRec = process_dir(path, img_file, STDOUT_FILENO);
+						if (r > 0) {
+							close(fd[1]);
+
+							read(fd[0], p, PATHLENGTH);
+							
+							if (CRec.distance > p->distance) {
+								strncpy(CRec.filename, p->filename, PATHLENGTH);
+								CRec.distance = p->distance;
+							}
+
+						}
+
+						if (r == 0) {
+							close(fd[0]);
+
+							// create Image representation of provided image
+							Image *img_file = read_image(image_file);
+
+							// call process_dir on each sub directory and write struct to the pipe
+							CRec = process_dir(path, img_file, fd[1]);
+
+							close(fd[1]);
+
+							//write(fd[1], CRec, PATHLENGTH);
+							exit(0);
+						}
 		}
 	}
 

@@ -46,14 +46,17 @@ int main(int argc, char **argv) {
 		
 	struct dirent *dp;
         CompRecord CRec;
+	
+	int fd[2], r;
+	pipe(fd);
+	r = fork();
 
 	while((dp = readdir(dirp)) != NULL) {
 
 		if(strcmp(dp->d_name, ".") == 0 || 
 		   strcmp(dp->d_name, "..") == 0 ||
 		   strcmp(dp->d_name, ".svn") == 0 ||
-		   strcmp(dp->d_name, ".git") == 0 ||
-		   strcmp(dp->d_name, ".DS_Store") == 0){
+		   strcmp(dp->d_name, ".git") == 0){
 			continue;
 		}
 		strncpy(path, startdir, PATHLENGTH);

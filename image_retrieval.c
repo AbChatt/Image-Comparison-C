@@ -51,7 +51,9 @@ int main(int argc, char **argv) {
 
 		if(strcmp(dp->d_name, ".") == 0 || 
 		   strcmp(dp->d_name, "..") == 0 ||
-		   strcmp(dp->d_name, ".svn") == 0){
+		   strcmp(dp->d_name, ".svn") == 0 ||
+		   strcmp(dp->d_name, ".git") == 0 ||
+		   strcmp(dp->d_name, ".DS_Store") == 0){
 			continue;
 		}
 		strncpy(path, startdir, PATHLENGTH);
@@ -70,10 +72,12 @@ int main(int argc, char **argv) {
 		// Otherwise ignore it.
 		if(S_ISDIR(sbuf.st_mode)) {
                         printf("Processing all images in directory: %s \n", path);
+						// create Image representation of provided image
+						Image *img_file = read_image(image_file);
+
 						// call process_dir on each sub directory
-						//CRec = process_dir(path, , STDOUT_FILENO);
+						CRec = process_dir(path, img_file, STDOUT_FILENO);
 		}
-		
 	}
 
         printf("The most similar image is %s with a distance of %f\n", CRec.filename, CRec.distance);

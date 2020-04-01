@@ -52,8 +52,7 @@ int main(int argc, char **argv) {
 		if(strcmp(dp->d_name, ".") == 0 || 
 		   strcmp(dp->d_name, "..") == 0 ||
 		   strcmp(dp->d_name, ".svn") == 0 ||
-		   strcmp(dp->d_name, ".git") == 0 ||
-		   strcmp(dp->d_name, ".DS_Store") == 0){
+		   strcmp(dp->d_name, ".git") == 0) {
 			continue;
 		}
 		strncpy(path, startdir, PATHLENGTH);

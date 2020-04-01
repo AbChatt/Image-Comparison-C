@@ -100,36 +100,22 @@ float eucl_distance (Pixel p1, Pixel p2) {
  * the file filename
  */
 
-float compare_images(Image *img1, char *filename) {
-       FILE *img_file = fopen(filename, "r");
-       Pixel new_pixel;
-       int row_num = -1;
-       int col_num = -1;
-       char data[3];
+float compare_images(Image *img1, char *filename) {     
+       Image *img2 = read_image(filename);
        int eucl_dist = 0;
        int count = 0;
 
-       // process header
-       fscanf(img_file, "%s", data);
-       fscanf(img_file, "%d %d", &col_num, &row_num);
-
-       // height = # rows
-       // width = # cols
-
-       if (col_num == img1->width && row_num == img1->height) {
-               for (int i = 0; i < row_num; i++) {
-                       for (int j = 0; j < col_num; j++) {
-                               fscanf(img_file, "%d %d %d", &new_pixel.red, &new_pixel.green, &new_pixel.blue);
-                               eucl_dist = eucl_distance(img1->p[count], new_pixel);
-                               count++;
-                       }
-               }
+       if (img1->height == img2->height && img1->width == img2->width) {
+               eucl_dist = eucl_distance(img1->p[count], img2->p[count]);
+               count++;
        }
        else
        {
                return FLT_MAX;
        }
-       
+
+       free(img2->p);
+       free(img2);
 
        return eucl_dist / count;
 }

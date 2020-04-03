@@ -97,7 +97,7 @@ float eucl_distance (Pixel p1, Pixel p2) {
 
 float compare_images(Image *img1, char *filename) {     
        Image *img2 = read_image(filename);
-       int eucl_dist = 0;
+       float eucl_dist = 0.0;
        int count = 0;
 
        if (img1->height == img2->height && img1->width == img2->width) {
@@ -111,7 +111,7 @@ float compare_images(Image *img1, char *filename) {
                free(img2->p);
                free(img2);
 
-               return eucl_dist / count;
+               return eucl_dist / (float) count;
        }
        else
        {
@@ -126,6 +126,38 @@ float compare_images(Image *img1, char *filename) {
 * - keep track of the image that is most similar 
 * - write a struct CompRecord with the info for the most similar image to out_fd
 */
+
+int check_file_type(char filename[FILENAME_MAX]) {
+        int index = -1;
+        int val = 0;
+        int length = strlen(filename);
+        char extension[PATHLENGTH] = "";
+
+        for (int i = 0; i < length; i++) {
+                if (filename[i] == '.') {
+                        index = i;
+                        break;
+                }
+        }
+
+        for (int j = 0; j < length - index + 1; j++) {
+                extension[j] = filename[index + j];
+                val = j;
+        }
+
+        extension[val + 1] = '\0';
+
+        if (strcmp(extension, ".ppm") == 0) {
+                return 1;
+        }
+        else
+        {
+                return 0;
+        }
+        
+
+}
+
 CompRecord process_dir(char *dirname, Image *img, int out_fd){
 
         CompRecord CRec;
@@ -133,7 +165,7 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
         struct dirent *dp;
         char current_path[PATHLENGTH];
         
-        float current_distance = -1.0;
+        float current_distance = 0.0;
         strncpy(CRec.filename, "", PATHLENGTH);
         CRec.distance = FLT_MAX;
 
@@ -158,12 +190,15 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
                         }
 
                         if (S_ISREG(info.st_mode)) {
-                                current_distance = compare_images(img, current_path);
-                                
-                                if (current_distance < CRec.distance) {
-                                        CRec.distance = current_distance;
-                                        strncpy(CRec.filename, current_path, PATHLENGTH);
+                                if (check_file_type(dp->d_name) == 1) {
+                                        current_distance = compare_images(img, current_path);
+
+                                        if (current_distance <= CRec.distance) {
+                                                CRec.distance = current_distance;
+                                                strncpy(CRec.filename, current_path, PATHLENGTH);
+                                        }
                                 }
+                                
                         }
                 }
         }

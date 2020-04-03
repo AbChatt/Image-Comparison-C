@@ -1,0 +1,11 @@
+Case                Message
+case0               The most similar image is  with a distance of 340282346638528859811704183484516925440.000000
+case1               The most similar image is  with a distance of 340282346638528859811704183484516925440.000000
+case2               The most similar image is 4.ppm with a distance of 120.418594
+case3               The most similar image is 1.ppm with a distance of 0.000000
+case4               The most similar image is 3.ppm with a distance of 150.565186
+case5               The most similar image is 6.ppm with a distance of 120.152740
+case6               The most similar image is 2.ppm with a distance of 164.071655
+
+cases 0, 1, 2, 6 pass
+cases 3, 4, 5 fail

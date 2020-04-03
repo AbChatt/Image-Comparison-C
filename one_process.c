@@ -46,6 +46,10 @@ int main(int argc, char **argv) {
 		
 	struct dirent *dp;
         CompRecord CRec;
+		CompRecord temp;
+
+		CRec.distance = FLT_MAX;
+		strncpy(CRec.filename, "", PATHLENGTH);
 
 	while((dp = readdir(dirp)) != NULL) {
 
@@ -75,7 +79,11 @@ int main(int argc, char **argv) {
 						Image *img_file = read_image(image_file);
 
 						// call process_dir on each sub directory
-						CRec = process_dir(path, img_file, STDOUT_FILENO);
+						temp = process_dir(path, img_file, STDOUT_FILENO);
+
+						if (temp.distance <= CRec.distance) {
+							CRec = temp;
+						}
 		}
 		
 	}

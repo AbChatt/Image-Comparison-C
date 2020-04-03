@@ -48,6 +48,9 @@ int main(int argc, char **argv) {
         CompRecord CRec;
 		CompRecord temp;
 
+		int fd[2], r;
+		pipe(fd);
+
 		CRec.distance = FLT_MAX;
 		strncpy(CRec.filename, "", PATHLENGTH);
 
@@ -75,15 +78,41 @@ int main(int argc, char **argv) {
 		// Otherwise ignore it.
 		if(S_ISDIR(sbuf.st_mode)) {
                         printf("Processing all images in directory: %s \n", path);
-						// create Image representation of provided image
-						Image *img_file = read_image(image_file);
 
-						// call process_dir on each sub directory
-						temp = process_dir(path, img_file, STDOUT_FILENO);
+						// fork child
+						r = fork();
 
-						if (temp.distance <= CRec.distance) {
-							CRec = temp;
+						if (r == 0) {
+							// child
+							close(fd[0]);
+
+							// create Image representation of provided image
+							Image *img_file = read_image(image_file);
+
+							// call process_dir on each sub directory
+							process_dir(path, img_file, fd[1]);
+
+							close(fd[1]);
+							exit(0);
 						}
+						else if (r > 0) {
+							// parent
+							//close(fd[1]);
+
+							read(fd[0], &temp, sizeof(temp));
+
+							//printf("%s : %f\n", temp.filename, temp.distance);
+							
+							if (temp.distance <= CRec.distance) {
+								CRec.distance = temp.distance;
+								strncpy(CRec.filename, temp.filename, PATHLENGTH);
+							}			
+						}
+						else
+						{
+							perror("unable to create child process");
+						}
+						
 		}
 		
 	}

@@ -39,6 +39,12 @@ Image* read_image(char *filename)
 
                 // make space for pixels
                 Pixel *arr = (Pixel *)calloc((img->height * img->width), sizeof(Pixel));
+
+                if (arr == NULL) {
+                        fprintf(stderr, "unable to allocate memory for storing pixels\n");
+                        return NULL;
+                }
+
                 img->p = arr;
 
                 // get pixels
@@ -203,6 +209,8 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
                 }
         }
         
-
+        if (out_fd != STDOUT_FILENO) {
+                write(out_fd, &CRec, sizeof(CRec));
+        }
         return CRec;
 }

@@ -7,5 +7,4 @@ case4               The most similar image is 3.ppm with a distance of 150.56518
 case5               The most similar image is 6.ppm with a distance of 120.152740
 case6               The most similar image is 2.ppm with a distance of 164.071655
 
-cases 0, 1, 2, 6 pass
-cases 3, 4, 5 fail
+all pass

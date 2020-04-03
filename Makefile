@@ -1,6 +1,6 @@
 # Makefile for image retrieval program.
 
-FLAGS= -Wall -std=gnu99 -lm
+FLAGS= -g -Wall -std=gnu99 -lm
 
 all : one_process image_retrieval
 

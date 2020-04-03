@@ -97,11 +97,8 @@ int main(int argc, char **argv) {
 						}
 						else if (r > 0) {
 							// parent
-							//close(fd[1]);
 
 							read(fd[0], &temp, sizeof(temp));
-
-							//printf("%s : %f\n", temp.filename, temp.distance);
 							
 							if (temp.distance <= CRec.distance) {
 								CRec.distance = temp.distance;

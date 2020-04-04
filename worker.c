@@ -210,7 +210,10 @@ CompRecord process_dir(char *dirname, Image *img, int out_fd){
         }
         
         if (out_fd != STDOUT_FILENO) {
-                write(out_fd, &CRec, sizeof(CRec));
+                if (write(out_fd, &CRec, sizeof(CRec)) == -1) {
+                        perror("Could not write to pipe\n");
+                        exit(1);
+                }
         }
         return CRec;
 }

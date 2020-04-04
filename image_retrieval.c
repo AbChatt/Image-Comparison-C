@@ -92,13 +92,18 @@ int main(int argc, char **argv) {
 							// call process_dir on each sub directory
 							process_dir(path, img_file, fd[1]);
 
+							// close any open file descriptors and exit
 							close(fd[1]);
 							exit(0);
 						}
 						else if (r > 0) {
 							// parent
 
-							read(fd[0], &temp, sizeof(temp));
+							// no need for while loop as OS will block call till pipe has data
+							if (read(fd[0], &temp, sizeof(temp)) == -1) {
+								perror("Unable to read from pipe\n");
+								exit(1);
+							}
 							
 							if (temp.distance <= CRec.distance) {
 								CRec.distance = temp.distance;
@@ -107,7 +112,7 @@ int main(int argc, char **argv) {
 						}
 						else
 						{
-							perror("unable to create child process");
+							perror("unable to create child process\n");
 						}
 						
 		}
